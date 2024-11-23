@@ -1,3 +1,4 @@
+import logging
 from datetime import datetime
 
 from app.udaconnect.models import Connection, Location, Person
@@ -36,6 +37,21 @@ class LocationResource(Resource):
         location: Location = LocationService.retrieve(location_id)
         return location
 
+    @responds(schema=LocationSchema)
+    def put(self, location_id) -> Location:
+        location: Location = LocationService.update(location_id, request.get_json())
+        return location
+
+    @responds(schema=LocationSchema)
+    def delete(self, location_id) -> Location:
+        location: Location = LocationService.update(location_id, request.get_json())
+        return location
+
+    @responds(schema=LocationSchema, many=True)
+    def get(self) -> List[Location]:
+        locations: List[Location] = LocationService.retrieve_all()
+        return locations
+
 
 @api.route("/persons")
 class PersonsResource(Resource):
@@ -58,6 +74,16 @@ class PersonResource(Resource):
     @responds(schema=PersonSchema)
     def get(self, person_id) -> Person:
         person: Person = PersonService.retrieve(person_id)
+        return person
+
+    @responds(schema=PersonSchema)
+    def put(self, person_id) -> Person:
+        person: Person = PersonService.update(person_id, request.get_json())
+        return person
+
+    @responds(schema=PersonSchema)
+    def delete(self, person_id) -> Person:
+        person: Person = PersonService.delete(person_id)
         return person
 
 

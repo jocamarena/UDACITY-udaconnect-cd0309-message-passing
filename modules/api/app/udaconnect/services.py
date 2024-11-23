@@ -95,6 +95,25 @@ class LocationService:
         return location
 
     @staticmethod
+    def update(location_id: int, location: Dict) -> Location:
+        location_to_update = db.session.query(Location).get(location_id)
+        location_to_update.creation_time = location["creation_time"]
+        location_to_update.coordinate = ST_Point(location["latitude"], location["longitude"])
+        db.session.commit()
+        return location_to_update
+
+    @staticmethod
+    def delete(location_id: int) -> Location:
+        location_to_delete = db.session.query(Location).get(location_id)
+        db.session.delete(location_to_delete)
+        db.session.commit()
+        return location_to_delete
+
+    @staticmethod
+    def retrieve_all() -> List[Location]:
+        return db.session.query(Location).all()
+
+    @staticmethod
     def create(location: Dict) -> Location:
         validation_results: Dict = LocationSchema().validate(location)
         if validation_results:
@@ -128,6 +147,20 @@ class PersonService:
     def retrieve(person_id: int) -> Person:
         person = db.session.query(Person).get(person_id)
         return person
+
+    def update(person_id: int, person: Dict) -> Person:
+        person_to_update = db.session.query(Person).get(person_id)
+        person_to_update.first_name = person["first_name"]
+        person_to_update.last_name = person["last_name"]
+        person_to_update.company_name = person["company_name"]
+        db.session.commit()
+        return person_to_update
+
+    def delete(person_id: int) -> Person:
+        person_to_delete = db.session.query(Person).get(person_id)
+        db.session.delete(person_to_delete)
+        db.session.commit()
+        return person_to_delete
 
     @staticmethod
     def retrieve_all() -> List[Person]:
