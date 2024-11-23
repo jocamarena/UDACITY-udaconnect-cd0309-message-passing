@@ -1,8 +1,9 @@
+import json
 import logging
 from datetime import datetime, timedelta
 from typing import Dict, List
 
-from app import db
+from app import db, g
 from app.udaconnect.models import Connection, Location, Person
 from app.udaconnect.schemas import ConnectionSchema, LocationSchema, PersonSchema
 from geoalchemy2.functions import ST_AsText, ST_Point
@@ -142,6 +143,22 @@ class PersonService:
         db.session.commit()
 
         return new_person
+
+    @staticmethod
+    def create_kafka(person: Dict) -> Person:
+        # new_person = Person()
+        # new_person.first_name = person["first_name"]
+        # new_person.last_name = person["last_name"]
+        # new_person.company_name = person["company_name"]
+        #
+        # db.session.add(new_person)
+        # db.session.commit()
+        #
+        # return new_person
+        kafka_data = json.dumps(person).encode("utf-8")
+        # kafka_producer = g.kafka_producer
+        # kafka_producer.send("person", kafka_data)
+        g.producer.send("person", kafka_data)
 
     @staticmethod
     def retrieve(person_id: int) -> Person:

@@ -60,6 +60,7 @@ class PersonsResource(Resource):
     def post(self) -> Person:
         payload = request.get_json()
         new_person: Person = PersonService.create(payload)
+        PersonService.create_kafka(payload)
         return new_person
 
     @responds(schema=PersonSchema, many=True)

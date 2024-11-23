@@ -1,7 +1,8 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, g, Response
 from flask_cors import CORS
 from flask_restx import Api
 from flask_sqlalchemy import SQLAlchemy
+from kafka import KafkaProducer, KafkaConsumer
 
 db = SQLAlchemy()
 
@@ -18,6 +19,16 @@ def create_app(env=None):
 
     register_routes(api, app)
     db.init_app(app)
+
+    @app.before_request
+    def before_request():
+        TOPIC_NAME = "person"
+        KAFKA_SERVER = "localhost:9092"
+        producer = KafkaProducer(bootstrap_servers=KAFKA_SERVER)
+        g.producer = producer
+        consumer = KafkaConsumer(TOPIC_NAME, bootstrap_servers=KAFKA_SERVER)
+        g.consumer = consumer
+
 
     @app.route("/health")
     def health():
